@@ -1,6 +1,8 @@
 import { createApp } from 'vue'
 // 清除默认样式
 import ElementPlus from 'element-plus'
+//@ts-ignore
+import zhCn from 'element-plus/dist/locale/zh-cn.js'
 import 'element-plus/dist/index.css'
 
 import '@/assets/style/reset.css'
@@ -16,6 +18,8 @@ app.component('HospitalTop', HospitalTop)
 app.component('HospitalBottom', HospitalBottom)
 
 app.use(router)
-app.use(ElementPlus)
+app.use(ElementPlus, {
+  locale: zhCn,
+})
 
 app.mount('#app')

@@ -10,7 +10,9 @@
     ],
     "skipLibCheck": true,
     /* Bundler mode */
-    "moduleResolution": "bundler",
+    // http://139.198.34.216:8201/swagger-ui.html#!/213073849831649297022550921475/indexUsingGET_4
+    // import element-ui 问题
+    "moduleResolution": "node",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -27,7 +29,8 @@
         "src/*"
       ]
     },
-    "types": ["element-plus/global"]
+    "types": ["element-plus/global"],
+    "allowJs": true
   },
   "include": [
     "src/**/*.ts",
