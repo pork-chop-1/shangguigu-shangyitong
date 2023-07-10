@@ -1,6 +1,28 @@
-<script setup lang="ts">import { HospitalDictTypes } from '@/api/home/model';
+<script setup lang="ts">
+import { reqHospitalDict } from '@/api/home'
+import { HospitalDictTypes } from '@/api/home/model'
+import { onMounted, ref } from 'vue'
 
-defineProps<{hospitalTypeList: HospitalDictTypes.Data[]}>()
+const hospitalTypeList = ref<HospitalDictTypes.Data[]>([])
+const active = ref('')
+
+onMounted(() => {
+  getHospitalDictInfo()
+})
+
+const getHospitalDictInfo = async () => {
+  const res = await reqHospitalDict({
+    dictCode: 'Hostype',
+  })
+  if (res.code === 200) {
+    const data = res.data
+    hospitalTypeList.value = data
+  }
+}
+
+defineExpose({
+  active,
+})
 </script>
 
 <template>
@@ -9,10 +31,16 @@ defineProps<{hospitalTypeList: HospitalDictTypes.Data[]}>()
     <div class="level1">
       <h2>等级:</h2>
       <ul>
-        <li v-for="(item) in hospitalTypeList" :key="item.id">{{ item.name }}</li>
+        <li :class="{ active: active === '' }" @click="active = ''">全部</li>
+        <li
+          :class="{ active: active === item.value.toString() }"
+          v-for="item in hospitalTypeList"
+          :key="item.id"
+          @click="active = item.value.toString()">
+          {{ item.name }}
+        </li>
       </ul>
     </div>
-
   </div>
 </template>
 
@@ -43,7 +71,11 @@ defineProps<{hospitalTypeList: HospitalDictTypes.Data[]}>()
         line-height: 2rem;
 
         &:hover {
-          color: rgb(74, 201, 255)
+          color: rgb(74, 201, 255);
+        }
+
+        &.active {
+          color: rgb(74, 201, 255);
         }
       }
     }

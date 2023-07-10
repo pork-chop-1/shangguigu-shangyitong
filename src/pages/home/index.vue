@@ -4,53 +4,61 @@ import Search from './search/index.vue'
 import Level from './level/index.vue'
 import Region from './region/index.vue'
 import Card from './card/index.vue'
-import { onMounted, ref } from 'vue'
-import { reqHospital, reqHospitalDict } from '@/api/home'
-import type { HospitalTypes, HospitalDictTypes } from '@/api/home/model'
+import Tip from './tip/index.vue'
+import { Ref, onMounted, ref, toRef, watch } from 'vue'
+import { reqHospital } from '@/api/home'
+import type { HospitalTypes } from '@/api/home/model'
 
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
 const hospitalList = ref<HospitalTypes.Content[]>([])
 const loading = ref(false)
-const hospitalTypeList = ref<HospitalDictTypes.Data[]>([])
+
+const levelRef = ref<InstanceType<typeof Level>>()
+let hospitalLevel: Ref<string> | null = null
+const regionRef = ref<InstanceType<typeof Region>>()
+let hospitalRegion: Ref<string> | null = null
 
 // 显示数量变化
-const handleSizeChange = () =>{ 
+const handleSizeChange = () => {
   getHospitalInfo()
 }
 
 // 页码变化
-const handleCurrentChange = () =>{
+const handleCurrentChange = () => {
   getHospitalInfo()
 }
 
 onMounted(async () => {
+  if (levelRef.value != null) {
+    hospitalLevel = toRef(levelRef.value, 'active')
+    watch(hospitalLevel, () => {
+      getHospitalInfo()
+    })
+  }
+  if (regionRef.value != null) {
+    hospitalRegion = toRef(regionRef.value, 'active')
+    watch(hospitalRegion, () => {
+      getHospitalInfo()
+    })
+  }
   getHospitalInfo()
-  getHospitalDictInfo()
 })
 
 const getHospitalInfo = async () => {
   loading.value = true
   const res = await reqHospital({
-    page: currentPage.value, 
-    limit: pageSize.value
+    page: currentPage.value,
+    limit: pageSize.value,
+    hostype: hospitalLevel?.value,
+    districtCode: hospitalRegion?.value
   })
   loading.value = false
-  if(res.code === 200) {
+  if (res.code === 200) {
     const data = res.data
     total.value = data.totalElements
     hospitalList.value = data.content
-  }
-}
-
-const getHospitalDictInfo = async () => {
-  const res = await reqHospitalDict({
-    dictCode: 'Hostype'
-  })
-  if(res.code === 200) {
-    const data = res.data
-    hospitalTypeList.value = data
   }
 }
 </script>
@@ -58,26 +66,29 @@ const getHospitalDictInfo = async () => {
 <template>
   <div>
     <!-- 首页轮播图 -->
-    <Carousal ></Carousal>
+    <Carousal></Carousal>
     <!-- 自动补全输入框 -->
     <Search />
     <!-- 中间布局 -->
     <el-row :gutter="20">
       <el-col :span="20">
         <!-- 选择等级 -->
-        <Level :hospitalTypeList="hospitalTypeList"/>
+        <Level ref="levelRef" />
         <!-- 选择区域 -->
-        <Region />
+        <Region ref="regionRef" />
         <!-- 卡片列表 -->
         <el-skeleton :loading="loading" :throttle="300">
           <template #template>
             <!-- 加载中的时候显示五条杠 -->
-            <el-skeleton :rows="5" animated />
+            <el-skeleton :rows="15" animated/>
           </template>
           <template #default>
             <!-- 实际加载后的卡片列表 -->
             <div class="hospital-card">
-              <Card v-for="(item) in hospitalList" :key="item.id" :hospitalInfo="item"/>
+              <Card
+                v-for="item in hospitalList"
+                :key="item.id"
+                :hospitalInfo="item" />
             </div>
           </template>
         </el-skeleton>
@@ -91,10 +102,11 @@ const getHospitalDictInfo = async () => {
           layout="prev, pager, next, sizes, jumper, ->, total"
           :total="total"
           @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+          @current-change="handleCurrentChange" />
       </el-col>
-      <el-col :span="4">312</el-col>
+      <el-col :span="4">
+        <Tip />
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -107,11 +119,12 @@ const getHospitalDictInfo = async () => {
   justify-content: space-between;
   padding: 1rem 0;
 
-  &>div {
+  & > div {
     width: 49%;
     margin-top: 1rem;
   }
 }
+
 .pagination {
   margin-bottom: 1rem;
 }

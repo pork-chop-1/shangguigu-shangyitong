@@ -68,7 +68,7 @@ export namespace HospitalTypes {
     empty: boolean;
   }
 
-  interface RootObject {
+  interface Root {
     code: number;
     message: string;
     data: Data;
@@ -92,10 +92,51 @@ export namespace HospitalDictTypes {
     hasChildren: boolean;
   }
 
-  export interface RootObject {
+  export interface Root {
     code: number;
     message: string;
     data: Data[];
     ok: boolean;
   }
+}
+
+export namespace hospitalListByName {
+  export interface Root {
+    code: number
+    message: string
+    data: Daum[]
+    ok: boolean
+  }
+  
+  export interface Daum {
+    id: string
+    createTime: string
+    updateTime: string
+    isDeleted: number
+    param: Param
+    hoscode: string
+    hosname: string
+    hostype: string
+    provinceCode: string
+    cityCode: string
+    districtCode: string
+    address: string
+    logoData: string
+    intro?: string
+    route: string
+    status: number
+    bookingRule: BookingRule
+  }
+  
+  export interface Param {}
+  
+  export interface BookingRule {
+    cycle: number
+    releaseTime: string
+    stopTime: string
+    quitDay: number
+    quitTime: string
+    rule: string[]
+  }
+  
 }

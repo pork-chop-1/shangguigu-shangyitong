@@ -11,7 +11,34 @@ const router = createRouter({
     {
       name: 'hospital',
       path: '/hospital',
-      component: () => import('@/pages/hospital/index.vue')
+      component: () => import('@/pages/hospital/index.vue'),
+      children: [
+        {
+          name: 'detail',
+          path: '/detail',
+          component: () => import('@/pages/hospital/detail/index.vue')
+        },
+        {
+          name: 'close',
+          path: '/close',
+          component: () => import('@/pages/hospital/close/index.vue')
+        },
+        {
+          name: 'notice',
+          path: '/notice',
+          component: () => import('@/pages/hospital/notice/index.vue')
+        },
+        {
+          name: 'register',
+          path: '/register',
+          component: () => import('@/pages/hospital/register/index.vue')
+        },
+        {
+          name: 'search',
+          path: '/search',
+          component: () => import('@/pages/hospital/search/index.vue')
+        },
+      ]
     },
     {
       path: '/',

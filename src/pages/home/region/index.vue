@@ -1,4 +1,28 @@
 <script setup lang="ts">
+import { reqHospitalDict } from '@/api/home'
+import { HospitalDictTypes } from '@/api/home/model'
+import { onMounted, ref } from 'vue'
+
+const hospitalTypeList = ref<HospitalDictTypes.Data[]>([])
+const active = ref('')
+
+onMounted(() => {
+  getHospitalDictInfo()
+})
+
+const getHospitalDictInfo = async () => {
+  const res = await reqHospitalDict({
+    dictCode: 'Beijin',
+  })
+  if (res.code === 200) {
+    const data = res.data
+    hospitalTypeList.value = data
+  }
+}
+
+defineExpose({
+  active,
+})
 </script>
 
 <template>
@@ -6,22 +30,14 @@
     <div class="level1">
       <h2>地区:</h2>
       <ul>
-        <li>长山区</li>
-        <li>长山区</li>
-        <li>长山区</li>
-        <li>长山区</li>
-        <li>长山区</li>
-        <li>长山区</li>
-        <li>长山区</li>
-        <li>长山区</li>
-        <li>长山区</li>
-        <li>长山区</li>
-        <li>长山区</li>
-        <li>长山区</li>
-        <li>长山区</li>
-        <li>长山区</li>
-        <li>长山区</li>
-        <li>长山区</li>
+        <li :class="{ active: active === '' }" @click="active = ''">全部</li>
+        <li
+          :class="{ active: active === item.id.toString() }"
+          v-for="item in hospitalTypeList"
+          :key="item.id"
+          @click="active = item.id.toString()">
+          {{ item.name }}
+        </li>
       </ul>
     </div>
   </div>
@@ -54,7 +70,10 @@
         line-height: 2rem;
 
         &:hover {
-          color: rgb(74, 201, 255)
+          color: rgb(74, 201, 255);
+        }
+        &.active {
+          color: rgb(74, 201, 255);
         }
       }
     }

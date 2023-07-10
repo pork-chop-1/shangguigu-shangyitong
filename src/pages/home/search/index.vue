@@ -1,49 +1,58 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import {Search} from '@element-plus/icons-vue'
+import { ref } from 'vue'
+import { Search } from '@element-plus/icons-vue'
+import { reqHospitalByName } from '@/api/home'
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
 
-interface RestaurantItem {
-  value: string
-  link: string
-}
+const router = useRouter()
 
 const keyword = ref('')
-const handleSelect = (_item: RestaurantItem) => {
+const handleSelect = (item: Record<string, any>) => {
+  item.link && router.push('hospital') // + item.link
+}
 
-} 
-
-const restaurants = ref<RestaurantItem[]>([])
 const querySearch = (queryString: string, cb: any) => {
-  const results = queryString
-    ? restaurants.value.filter(createFilter(queryString))
-    : restaurants.value
-  // call callback function to return suggestions
-  cb(results)
-}
-const createFilter = (queryString: string) => {
-  return (restaurant: RestaurantItem) => {
-    return (
-      restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
-    )
+  if (queryString === '') {
+    cb([])
+    return
   }
+  reqHospitalByName(queryString)
+    .then((res) => {
+      const result: Record<string, any>[] = res.data.map((v) => {
+        return {
+          value: v.hosname,
+          link: v.address,
+        }
+      })
+      cb(result)
+    })
+    .catch((err) => {
+      cb([])
+      ElMessage({ type: 'error', message: err })
+      return
+    })
 }
 
-const onSubmit = () => {
-  
-}
+const onSubmit = () => {}
+
+defineOptions({
+  name: 'Search',
+})
 </script>
 
 <template>
   <div class="search">
     <el-autocomplete
-        v-model="keyword"
-        :fetch-suggestions="querySearch"
-        clearable
-        class="input"
-        placeholder="输入医院名称"
-        @select="handleSelect"
-      />
-      <el-button type="primary" @click="onSubmit" class="submit" :icon="Search">搜索</el-button>
+      v-model="keyword"
+      :fetch-suggestions="querySearch"
+      clearable
+      class="input"
+      placeholder="输入医院名称"
+      @select="handleSelect" />
+    <el-button type="primary" @click="onSubmit" class="submit" :icon="Search"
+      >搜索</el-button
+    >
   </div>
 </template>
 
@@ -58,7 +67,7 @@ const onSubmit = () => {
   // 深度
   :deep(.el-input__wrapper) {
     width: 600px;
-    height: 50px;;
+    height: 50px;
   }
   .submit {
     width: 80px;
