@@ -15,27 +15,27 @@ const router = createRouter({
       children: [
         {
           name: 'detail',
-          path: '/detail',
+          path: 'detail',
           component: () => import('@/pages/hospital/detail/index.vue')
         },
         {
           name: 'close',
-          path: '/close',
+          path: 'close',
           component: () => import('@/pages/hospital/close/index.vue')
         },
         {
           name: 'notice',
-          path: '/notice',
+          path: 'notice',
           component: () => import('@/pages/hospital/notice/index.vue')
         },
         {
           name: 'register',
-          path: '/register',
+          path: 'register',
           component: () => import('@/pages/hospital/register/index.vue')
         },
         {
           name: 'search',
-          path: '/search',
+          path: 'search',
           component: () => import('@/pages/hospital/search/index.vue')
         },
       ]

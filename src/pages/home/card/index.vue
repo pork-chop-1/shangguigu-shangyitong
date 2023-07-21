@@ -1,12 +1,26 @@
 <script setup lang="ts">
 import { HospitalTypes } from '@/api/home/model';
 import { Timer, Odometer } from '@element-plus/icons-vue';
+import { toRef } from 'vue';
+import { useRouter } from 'vue-router';
 
-defineProps<{ hospitalInfo: HospitalTypes.Content }>()
+const router = useRouter()
+
+const props = defineProps<{ hospitalInfo: HospitalTypes.Content }>()
+const hospitalInfo = toRef(props, 'hospitalInfo')
+
+const goDetail = () => {
+  router.push({
+    path: '/hospital/register',
+    query: {
+      hoscode: hospitalInfo.value.hoscode
+    }
+  })
+}
 </script>
 
 <template>
-  <el-card :shadow="'hover'">
+  <el-card :shadow="'hover'" @click="goDetail">
     <div class="box-card">
       <div class="l">
         <div class="hospital-name">

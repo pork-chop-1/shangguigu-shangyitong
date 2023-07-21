@@ -5,6 +5,8 @@ import ElementPlus from 'element-plus'
 import zhCn from 'element-plus/dist/locale/zh-cn.js'
 import 'element-plus/dist/index.css'
 
+import pinia from '@/store'
+
 import '@/assets/style/reset.css'
 import '@/assets/style/style.css'
 import App from './App.vue'
@@ -18,6 +20,7 @@ app.component('HospitalTop', HospitalTop)
 app.component('HospitalBottom', HospitalBottom)
 
 app.use(router)
+app.use(pinia)
 app.use(ElementPlus, {
   locale: zhCn,
 })
